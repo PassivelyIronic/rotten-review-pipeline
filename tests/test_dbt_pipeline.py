@@ -83,3 +83,39 @@ def test_feature_bridge_on_mart(warehouse):
     assert enriched["bias_score"].between(1, 10).all()
     agreement = features.sentiment_agreement(enriched)
     assert 0.0 <= agreement <= 1.0
+
+
+def test_staging_removes_source_duplicates(warehouse):
+    """The dump contains exact duplicate rows; staging must collapse them."""
+    raw = _query(
+        warehouse,
+        """
+        SELECT count(*) AS eligible
+        FROM sample_rt_reviews
+        WHERE top_critic AND review_content IS NOT NULL
+          AND critic_name IS NOT NULL AND trim(critic_name) <> ''
+        """,
+    )["eligible"].iloc[0]
+    staged = _query(warehouse, "SELECT count(*) AS n FROM stg_rt_reviews")["n"].iloc[0]
+
+    assert staged < raw, "seeds contain planted duplicates that staging did not remove"
+    ids = _query(warehouse, "SELECT review_id FROM stg_rt_reviews")["review_id"]
+    assert ids.is_unique
+
+
+def test_staging_drops_unattributed_reviews(warehouse):
+    """Rows with no critic name would collapse into one pseudo-critic downstream."""
+    nameless = _query(
+        warehouse,
+        "SELECT count(*) AS n FROM sample_rt_reviews WHERE trim(coalesce(critic_name, '')) = ''",
+    )["n"].iloc[0]
+    assert nameless > 0, "seed fixture no longer covers the unattributed-review case"
+
+    staged = _query(
+        warehouse,
+        "SELECT count(*) AS n FROM stg_rt_reviews WHERE trim(coalesce(critic_name, '')) = ''",
+    )["n"].iloc[0]
+    assert staged == 0
+
+    critics = _query(warehouse, "SELECT critic_name FROM dim_reviewers")["critic_name"]
+    assert critics.notna().all()

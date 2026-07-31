@@ -14,6 +14,12 @@ Deliberately planted edge cases (asserted by tests/test_dbt_pipeline.py):
   * a share of reviews that spell their own verdict out in the body text
     ("Verdict: 3/5"), which is how the target leaks into text features on the
     real dataset too — see notebooks/01_review_integrity_analysis.ipynb
+  * exact duplicate rows and rows with no critic name, both present in the real
+    Kaggle dump and both stripped by staging before reviewer-level aggregates
+    are computed
+  * exact duplicate rows and rows with no critic name, both of which the real
+    Kaggle dump contains and staging has to strip before reviewer-level
+    aggregates mean anything
 
 Run: python scripts/generate_seeds.py
 """
@@ -276,6 +282,15 @@ def build_reviews(movies: list[list]) -> list[list]:
             _review_text("positive", index + 2),
         ]
     )
+
+    # source-data pathologies that staging has to strip (see stg_rt_reviews.sql):
+    # the real dump carries exact duplicate rows and rows with no critic name
+    rows.extend([list(row) for row in RNG.sample(rows[:200], 12)])
+    for row in RNG.sample(rows[:200], 6):
+        nameless = list(row)
+        nameless[1] = ""
+        rows.append(nameless)
+
     return rows
 
 
@@ -295,7 +310,7 @@ def main() -> None:
     imdb = build_imdb()
 
     SEEDS_DIR.mkdir(parents=True, exist_ok=True)
-    with open(SEEDS_DIR / "sample_rt_movies.csv", "w", newline="") as fh:
+    with open(SEEDS_DIR / "sample_rt_movies.csv", "w", newline="", encoding="utf-8") as fh:
         writer = csv.writer(fh)
         writer.writerow(
             [
@@ -308,7 +323,7 @@ def main() -> None:
         )
         writer.writerows(movies)
 
-    with open(SEEDS_DIR / "sample_rt_reviews.csv", "w", newline="") as fh:
+    with open(SEEDS_DIR / "sample_rt_reviews.csv", "w", newline="", encoding="utf-8") as fh:
         writer = csv.writer(fh)
         writer.writerow(
             [
@@ -324,7 +339,7 @@ def main() -> None:
         )
         writer.writerows(reviews)
 
-    with open(SEEDS_DIR / "sample_imdb_reviews.csv", "w", newline="") as fh:
+    with open(SEEDS_DIR / "sample_imdb_reviews.csv", "w", newline="", encoding="utf-8") as fh:
         writer = csv.writer(fh)
         writer.writerow(["review", "sentiment"])
         writer.writerows(imdb)

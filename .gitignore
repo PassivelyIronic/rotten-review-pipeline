@@ -12,6 +12,7 @@ reports/metrics.json
 dbt/target/
 dbt/logs/
 dbt/dbt_packages/
+dbt/.user.yml
 
 .venv/
 .env

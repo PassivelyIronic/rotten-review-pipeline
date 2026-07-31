@@ -9,6 +9,11 @@ Run after training so the README never carries hand-typed numbers:
 The script rewrites only the block between the two marker comments in README.md
 and refuses to invent anything: metrics absent from metrics.json are simply not
 listed.
+
+Every file is read and written as UTF-8 explicitly. Python falls back to the
+locale encoding otherwise, which is cp1252 on a default Windows install — and
+this README contains em dashes, superscripts and plus-minus signs, so the
+implicit path raises UnicodeDecodeError there.
 """
 
 from __future__ import annotations
@@ -87,15 +92,17 @@ def main() -> int:
         print(f"{METRICS_PATH} not found — run the training commands first.", file=sys.stderr)
         return 1
 
-    metrics = json.loads(METRICS_PATH.read_text())
-    readme = README_PATH.read_text()
+    metrics = json.loads(METRICS_PATH.read_text(encoding="utf-8"))
+    readme = README_PATH.read_text(encoding="utf-8")
     if START not in readme or END not in readme:
         print(f"Markers {START} / {END} not found in README.md", file=sys.stderr)
         return 1
 
     head, rest = readme.split(START, 1)
     _, tail = rest.split(END, 1)
-    README_PATH.write_text(f"{head}{START}\n\n{build_table(metrics)}\n\n{END}{tail}")
+    README_PATH.write_text(
+        f"{head}{START}\n\n{build_table(metrics)}\n\n{END}{tail}", encoding="utf-8"
+    )
     print("README results table updated.")
     return 0
 

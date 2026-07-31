@@ -23,6 +23,7 @@ ingest = ["kagglehub>=0.2", "beautifulsoup4", "contractions", "nltk"]
 embeddings = ["sentence-transformers>=2.2", "umap-learn>=0.5"]
 app = ["gradio>=4.0"]
 dbt = ["dbt-duckdb>=1.7"]
+notebook = ["jupyter>=1.0", "matplotlib>=3.7", "seaborn>=0.13"]
 dev = ["pytest>=7.4", "ruff>=0.4"]
 
 [project.scripts]

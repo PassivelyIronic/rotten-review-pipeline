@@ -24,9 +24,9 @@ from rotten_review.preprocessing import clean_text
 def _write_metrics(name: str, metrics: dict) -> None:
     config.REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     path = config.REPORTS_DIR / "metrics.json"
-    existing = json.loads(path.read_text()) if path.exists() else {}
+    existing = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     existing[name] = metrics
-    path.write_text(json.dumps(existing, indent=2))
+    path.write_text(json.dumps(existing, indent=2), encoding="utf-8")
     print(f"[{name}] {json.dumps({k: v for k, v in metrics.items() if k != 'report'})}")
 
 
@@ -117,7 +117,7 @@ def cmd_evaluate(_: argparse.Namespace) -> None:
     path = config.REPORTS_DIR / "metrics.json"
     if not path.exists():
         raise SystemExit("No reports/metrics.json yet — run the train commands first.")
-    print(path.read_text())
+    print(path.read_text(encoding="utf-8"))
 
 
 def main() -> None:

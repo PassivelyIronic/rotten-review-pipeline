@@ -6,6 +6,13 @@ model-paths: ["models"]
 seed-paths: ["seeds"]
 test-paths: ["tests"]
 
+# The seeds are fixtures for CI and for the notebook's sample mode. Loading them
+# into a real warehouse alongside the ingested data is just noise, so they are
+# enabled only on the targets that actually read them.
+seeds:
+  rotten_review:
+    +enabled: "{{ target.name in ['ci', 'test'] }}"
+
 models:
   rotten_review:
     staging:
