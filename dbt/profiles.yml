@@ -1,0 +1,15 @@
+rotten_review:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('ROTTEN_REVIEW_DB', '../data/warehouse.duckdb') }}"
+      threads: 4
+    ci:
+      type: duckdb
+      path: ":memory:"
+      threads: 4
+    test:
+      type: duckdb
+      path: "{{ env_var('ROTTEN_REVIEW_DB') }}"
+      threads: 4

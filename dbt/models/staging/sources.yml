@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: main
+    description: Raw tables loaded by `rotten-review ingest` from Kaggle parquet files.
+    tables:
+      - name: raw_rt_reviews
+      - name: raw_rt_movies
+      - name: raw_imdb_reviews

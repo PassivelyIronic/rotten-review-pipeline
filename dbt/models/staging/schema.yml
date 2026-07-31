@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_rt_reviews
+    description: Top-critic Rotten Tomatoes reviews with parsed 0-100 / 1-10 scores.
+    columns:
+      - name: review_id
+        tests: [not_null, unique]
+      - name: review_type_encoded
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: review_text
+        tests: [not_null]
+      - name: split
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['train', 'holdout']
+  - name: stg_rt_movies
+    columns:
+      - name: rotten_tomatoes_link
+        tests: [not_null, unique]
+  - name: stg_sentiment_corpus
+    columns:
+      - name: label
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [-1, 1]

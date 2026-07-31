@@ -1,0 +1,17 @@
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# data & artifacts (reproducible via `make ingest` / `make train`)
+data/
+artifacts/
+reports/metrics.json
+
+# dbt
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+
+.venv/
+.env

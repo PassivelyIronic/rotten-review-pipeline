@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: fct_review_features
+    description: Review-level behavioural feature mart consumed by the ML models.
+    columns:
+      - name: review_id
+        tests: [not_null, unique]
+      - name: critic_std_score_10
+        tests: [not_null]
+  - name: dim_reviewers
+    columns:
+      - name: critic_name
+        tests: [not_null, unique]

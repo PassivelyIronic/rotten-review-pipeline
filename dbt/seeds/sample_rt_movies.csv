@@ -1,0 +1,41 @@
+rotten_tomatoes_link,movie_title,original_release_date,tomatometer_rating,production_company
+m/alpha_sky,Alpha Sky,2022-11-20,42,Meridian
+m/delta_road,Delta Road,2021-08-26,31,Pinewheel
+m/last_city,Last City,2022-09-20,60,Meridian
+m/hollow_sea,Hollow Sea,2022-05-27,34,Nova Films
+m/hollow_harvest,Hollow Harvest,2022-12-26,97,Pinewheel
+m/northern_city,Northern City,2022-03-14,34,Pinewheel
+m/crimson_city,Crimson City,2020-07-04,29,Meridian
+m/broken_sky,Broken Sky,2022-05-09,41,Nova Films
+m/silent_anthem,Silent Anthem,2021-11-13,47,Meridian
+m/epsilon_night,Epsilon Night,2022-10-11,21,Pinewheel
+m/gamma_city,Gamma City,2020-12-22,55,Orbit Studio
+m/beta_city,Beta City,2021-11-26,45,Pinewheel
+m/alpha_sea,Alpha Sea,2021-09-26,73,Meridian
+m/gamma_orbit,Gamma Orbit,2022-08-23,77,Nova Films
+m/beta_winter,Beta Winter,2022-05-10,97,Halcyon Pictures
+m/silent_garden,Silent Garden,2022-08-13,14,Nova Films
+m/silent_city,Silent City,2020-07-11,61,Orbit Studio
+m/gamma_road,Gamma Road,2020-01-17,58,Halcyon Pictures
+m/golden_road,Golden Road,2021-10-24,20,Nova Films
+m/epsilon_anthem,Epsilon Anthem,2019-12-26,18,Meridian
+m/broken_sea,Broken Sea,2022-05-03,56,Nova Films
+m/silent_winter,Silent Winter,2021-11-12,57,Pinewheel
+m/hollow_winter,Hollow Winter,2020-06-17,13,Meridian
+m/northern_road,Northern Road,2022-01-21,46,Nova Films
+m/alpha_signal,Alpha Signal,2019-04-21,73,Nova Films
+m/golden_sky,Golden Sky,2019-06-15,87,Meridian
+m/last_sky,Last Sky,2020-08-23,54,Halcyon Pictures
+m/beta_harvest,Beta Harvest,2020-02-21,88,Orbit Studio
+m/alpha_road,Alpha Road,2022-12-19,21,Halcyon Pictures
+m/hollow_road,Hollow Road,2023-01-18,64,Meridian
+m/hollow_anthem,Hollow Anthem,2022-05-29,72,Meridian
+m/epsilon_road,Epsilon Road,2022-03-24,36,Pinewheel
+m/beta_night,Beta Night,2021-01-13,64,Halcyon Pictures
+m/beta_road,Beta Road,2022-12-23,85,Pinewheel
+m/beta_sea,Beta Sea,2020-12-25,60,Meridian
+m/beta_machine,Beta Machine,2020-02-05,68,Pinewheel
+m/golden_sea,Golden Sea,2020-07-12,35,Halcyon Pictures
+m/beta_orbit,Beta Orbit,2020-03-25,23,Pinewheel
+m/broken_orbit,Broken Orbit,2021-10-11,96,Meridian
+m/crimson_night,Crimson Night,2021-10-25,75,Orbit Studio

@@ -1,0 +1,16 @@
+version: 2
+
+seeds:
+  - name: sample_rt_reviews
+    description: Synthetic sample mirroring the Clapper reviews schema (CI only).
+    config:
+      column_types:
+        top_critic: boolean
+        review_date: date
+  - name: sample_rt_movies
+    config:
+      column_types:
+        original_release_date: date
+        tomatometer_rating: double
+  - name: sample_imdb_reviews
+    description: Synthetic sample mirroring the IMDB 50k schema (CI only).

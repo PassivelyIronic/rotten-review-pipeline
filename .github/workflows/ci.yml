@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff
+      - run: ruff check .
+      - run: ruff format --check .
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dbt,dev]"
+      - name: Unit + integration tests (includes dbt build on synthetic seeds)
+        run: pytest
+
+  dbt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install dbt-duckdb
+      - name: dbt build (ci target, in-memory DuckDB, synthetic seeds)
+        working-directory: dbt
+        run: dbt build --target ci --profiles-dir .
+
+  notebook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dbt,dev]" jupyter matplotlib seaborn
+      - name: Execute the analysis notebook end to end (sample mode)
+        run: |
+          jupyter nbconvert --to notebook --execute \
+            --output /tmp/executed.ipynb \
+            notebooks/01_review_integrity_analysis.ipynb

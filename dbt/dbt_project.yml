@@ -1,0 +1,16 @@
+name: rotten_review
+version: "1.0.0"
+profile: rotten_review
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+
+models:
+  rotten_review:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
