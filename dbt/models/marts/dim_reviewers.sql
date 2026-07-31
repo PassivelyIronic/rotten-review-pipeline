@@ -7,6 +7,7 @@ with bursts as (
         max(b.reviewer_reviews_last_7d) as max_reviews_in_7d
     from {{ ref('stg_rt_reviews') }} r
     join {{ ref('int_burst_activity') }} b using (review_id)
+    where not b.is_backfill_batch
     group by r.critic_name
 )
 

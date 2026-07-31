@@ -45,7 +45,8 @@ The split follows one rule: **set-based feature engineering lives in SQL, model-
 | No tests | 11 pytest tests + 15 dbt data tests + 2 singular SQL tests, all in CI |
 | Embeddings hard-wired to SentenceTransformer | Pluggable stateful embedder — SBERT in production, TF-IDF+SVD when weights are unavailable, fitted once and persisted with the detector so a saved model can score new reviews |
 | Sentiment model evaluated on rows it had trained on | Deterministic `train`/`holdout` fold assigned in dbt and hashed on `review_id`, so the split survives every rebuild |
-| Digits kept in cleaned text, leaking `"3/5"` into the score model's features | Digits removed; the notebook measures the effect on exactly the rows it applied to |
+| Digits kept in cleaned text, potentially leaking `"3/5"` into the score model's features | Digits removed — and the notebook measures the effect rather than asserting it. On this dataset it turns out to be immaterial (0.2% of reviews restate their score); the negative result is reported as such |
+| Burst detection counting archive backfill as publication cadence — the first real run scored Roger Ebert at 2,159 reviews in 7 days | Same-day import batches detected and excluded from the window, with the flag carried into the mart |
 | Duplicate and unattributed source rows carried straight into reviewer statistics | Stripped in staging, with the row cost printed as a funnel in the notebook and pinned by tests |
 | Not reproducible without manual cell ordering | `make ingest` → `make dbt` → `make train` |
 

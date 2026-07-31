@@ -6,6 +6,7 @@
 --     Left in, they inflate every reviewer-level aggregate — a critic looks
 --     twice as prolific, which is precisely the burst signal Model 3 keys on —
 --     and the same text can land on both sides of the train/holdout split.
+--   * some rows carry placeholder publication dates.
 --   * some rows carry no critic name. Grouping on a NULL critic collapses them
 --     all into one enormous pseudo-critic, poisoning the z-scores and burst
 --     windows for every row in it. They cannot support reviewer-level
@@ -36,7 +37,15 @@ parsed as (
         rotten_tomatoes_link,
         critic_name,
         publisher_name,
-        cast(review_date as date) as review_date,
+        -- sentinel dates (the dump's earliest is 1800-01-01) are placeholders,
+        -- not publication dates. Null them so the review still feeds the text
+        -- models while the timing features correctly report "unknown".
+        case
+            when cast(review_date as date)
+                 between date '{{ var("earliest_plausible_review_date", "1900-01-01") }}'
+                     and current_date
+            then cast(review_date as date)
+        end as review_date,
         review_content as review_text,
         length(review_content) - length(replace(review_content, ' ', '')) + 1 as word_count,
         case review_type when 'Fresh' then 1 when 'Rotten' then 0 end as review_type_encoded,

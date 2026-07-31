@@ -283,13 +283,44 @@ def build_reviews(movies: list[list]) -> list[list]:
         ]
     )
 
-    # source-data pathologies that staging has to strip (see stg_rt_reviews.sql):
-    # the real dump carries exact duplicate rows and rows with no critic name
+    # source-data pathologies that staging has to strip (see stg_rt_reviews.sql
+    # and int_burst_activity.sql); all four are present in the real dump
     rows.extend([list(row) for row in RNG.sample(rows[:200], 12)])
     for row in RNG.sample(rows[:200], 6):
         nameless = list(row)
         nameless[1] = ""
         rows.append(nameless)
+
+    # archive backfill: a critic's back catalogue imported under one timestamp.
+    # Counted naively this reads as the largest "burst" in the dataset.
+    for offset, movie in enumerate(RNG.choices(movies, k=40)):
+        rows.append(
+            [
+                movie[0],
+                "Archive Critic",
+                True,
+                "The Reeling",
+                "Fresh",
+                "7/10",
+                "2015-06-01",
+                _review_text("positive", 9000 + offset),
+            ]
+        )
+
+    # sentinel publication dates: placeholders, not real dates
+    for offset, movie in enumerate(RNG.choices(movies, k=5)):
+        rows.append(
+            [
+                movie[0],
+                "Mordaunt Placeholder",
+                True,
+                "Cinema Post",
+                "Fresh",
+                "8/10",
+                "1800-01-01",
+                _review_text("positive", 9500 + offset),
+            ]
+        )
 
     return rows
 

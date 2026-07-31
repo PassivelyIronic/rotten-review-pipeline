@@ -119,3 +119,49 @@ def test_staging_drops_unattributed_reviews(warehouse):
 
     critics = _query(warehouse, "SELECT critic_name FROM dim_reviewers")["critic_name"]
     assert critics.notna().all()
+
+
+def test_archive_backfill_does_not_register_as_burst(warehouse):
+    """A back catalogue imported under one timestamp is not a publication burst.
+
+    A RANGE window includes every row tied on the ordering value, so without
+    special handling the most prolific critics score the highest burst in the
+    dataset — the first full run rated Roger Ebert at 2,159 reviews in 7 days.
+    """
+    backfill = _query(
+        warehouse,
+        """
+        SELECT count(*) AS rows_flagged,
+               count(reviewer_reviews_last_7d) AS rows_with_burst
+        FROM fct_review_features WHERE is_backfill_batch
+        """,
+    )
+    assert backfill["rows_flagged"].iloc[0] > 0, "seed fixture no longer plants a backfill batch"
+    assert backfill["rows_with_burst"].iloc[0] == 0, "backfill rows must not carry burst features"
+
+    summary = _query(warehouse, "SELECT critic_name, max_reviews_in_7d FROM dim_reviewers")
+    archive = summary[summary["critic_name"] == "Archive Critic"]["max_reviews_in_7d"]
+    assert archive.empty or archive.isna().all() or archive.iloc[0] <= 8
+
+    # the genuine bursty critic must survive the fix
+    burst_bot = summary[summary["critic_name"] == "Burst Bot"]["max_reviews_in_7d"].iloc[0]
+    assert burst_bot > 8
+
+
+def test_sentinel_dates_are_nulled_not_trusted(warehouse):
+    """Placeholder dates must not become timing features, but the text survives."""
+    sentinel = _query(
+        warehouse,
+        "SELECT count(*) AS n FROM sample_rt_reviews WHERE review_date < '1900-01-01'",
+    )["n"].iloc[0]
+    assert sentinel > 0, "seed fixture no longer covers the sentinel-date case"
+
+    staged = _query(
+        warehouse,
+        """
+        SELECT count(*) AS kept, count(review_date) AS dated
+        FROM stg_rt_reviews WHERE critic_name = 'Mordaunt Placeholder'
+        """,
+    )
+    assert staged["kept"].iloc[0] == sentinel, "sentinel-dated reviews should be kept"
+    assert staged["dated"].iloc[0] == 0, "sentinel dates should be NULL, not trusted"

@@ -20,6 +20,8 @@ with base as (
         e.tomatometer_rating,
         e.days_since_release,
         e.is_early_review,
+        b.reviews_same_day,
+        b.is_backfill_batch,
         b.reviewer_reviews_last_7d,
         b.reviewer_burst_ratio_7d,
         b.is_reviewer_burst_any,

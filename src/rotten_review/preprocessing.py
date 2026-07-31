@@ -19,9 +19,16 @@ _PUNCT_TABLE = str.maketrans("", "", string.punctuation)
 
 def _strip_html(text: str) -> str:
     try:
-        from bs4 import BeautifulSoup
+        import warnings
 
-        return BeautifulSoup(text, "html.parser").get_text(separator=" ")
+        from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
+
+        # A review consisting of a bare URL makes bs4 warn that the input "looks
+        # more like a URL than HTML". That is exactly what we are feeding it, on
+        # purpose, a million times over — the warning is noise here.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", MarkupResemblesLocatorWarning)
+            return BeautifulSoup(text, "html.parser").get_text(separator=" ")
     except ImportError:
         return _HTML_TAG_RE.sub(" ", text)
 
